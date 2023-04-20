@@ -1,0 +1,65 @@
+{%extends 'base.html'%}
+{%block head%} <link rel="stylesheet" href="{{url_for('static', filename='css/styles.css')}}"/> {%endblock%}
+{%block title%} Chat {{room}}! {%endblock%}
+{%block body%} 
+    <div class="d-flex justify-content-center">
+        <h1> Welcome to {{room}} </h1>
+    </div>
+    <div class="d-flex justify-content-center">
+        <b><h3>Room ID: {{roomID}}</h3></b>
+    </div>
+    <div class="container">
+        <div class="messages" id="messages"></div>
+        <div class="inputs">
+            <input type="text" name="messageInput" id="messageInput" placeholder="Enter message here">
+            <button type="submit" class="btn btn-success btn-sm" onClick="sendMessage()">Send</button>
+        </div>  
+    </div>
+
+{%endblock%}
+{%block script%}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
+<script>
+    function getCurrentURL(){
+        return window.location.href
+    }
+    const url = getCurrentURL()
+    const conn = url.split("/")
+    const socket = io.connect(`${conn[2]}/`);
+    const sendMessage = () => {
+        let messageInput = document.getElementById('messageInput');
+        let message = messageInput.value.trim();
+        if(message.length){
+            socket.emit('sent_message', {
+                username: "{{username}}",
+                room: "{{room}}",
+                message: message
+            });
+        }
+        messageInput.value = '';
+        messageInput.focus();
+    };
+
+    socket.on('connect', function(){
+        socket.emit('join_room', {
+            username : "{{username}}",
+            room: "{{room}}"
+        });
+    });
+
+
+    socket.on('messageReceive', function(data){
+        console.log(data);
+        const newDiv = document.createElement('div')
+        newDiv.innerHTML = `<b>${data.username}</b> ${data.message}`;
+        document.getElementById('messages').appendChild(newDiv);
+    })
+
+    socket.on('joined', function(data){
+        console.log(data);
+        const newDiv = document.createElement('div')
+        newDiv.innerHTML = `<b>${data.username}</b> has joined the room`;
+        document.getElementById('messages').appendChild(newDiv);
+    })
+</script>
+{%endblock%}
