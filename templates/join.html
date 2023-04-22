@@ -13,22 +13,19 @@
             <h2>Join room</h2>
 
             <div class="form-outline mb-4">
-              <input type="text" id="username" name="username" class="form-control form-control-lg" />
-              <label class="form-label" for="username">Enter your username</label>
-            </div>
-
-            <div class="form-outline mb-4">
-              <input type="password" id="roomName" name="roomName" class="form-control form-control-lg" />
+              <input type="text" id="roomName" name="roomName" class="form-control form-control-lg" />
               <label class="form-label" for="roomName">Room name</label>
             </div>
 
-            <!-- Password input -->
             <div class="form-outline mb-4">
-              <input type="password" id="roomPass" name="roomPass" class="form-control form-control-lg" />
-              <label class="form-label" for="roomPass">Room password</label>
+              <input type="text" id="roomID" name="roomID" class="form-control form-control-lg" />
+              <label class="form-label" for="roomID">Room ID</label>
             </div>
-  
-            <!-- Submit button -->
+            
+            <div> 
+              <h6><b>{{message}}</b><h6>
+            </div>
+
             <button type="submit" class="btn btn-primary btn-lg btn-block">Join</button>
   
           </form>

@@ -30,20 +30,38 @@ def getUser(username):
         return None
 
 
-def saveRoom(roomName, roomOwner, roomMembers, roomPass):
+def saveRoom(roomName, roomOwner, roomMembers):
     ID = ObjectId()
     rooms.insert_one({
         '_id': ID,
         'roomName': roomName,
         'roomOwner': roomOwner,
         'roomMembers': roomMembers,
-        'roomPass': roomPass,
         'createdAt': datetime.now()
     })
     return ID
 
-def validateMember(roomMember):
-    return getUser(roomMember)
+def isMember(roomID, username):
+    result = rooms.find_one({
+        '_id': ObjectId(roomID),
+        'roomMembers': {"$all": [f'{username}']}
+    })
+    return result
 
-#def addMember(roomID, roomName, username, addedBy, mod=False):
+def isOwner(roomID, username):
+    result = rooms.find_one({
+        '_id': ObjectId(roomID),
+        'roomOwner': username
+    })
+    return result
+
+def getRooms(username):
+    lst = []
+    lst2 = []
+    for room in rooms.find({'roomMembers': {"$all": [f'{username}']}}):
+        lst.append({'roomName': room['roomName'], 'ID': room['_id']})
+    for room in rooms.find({'roomOwner': username}):
+        lst2.append({'roomName': room['roomName'], 'ID': room['_id']})
+    return lst, lst2
+
 

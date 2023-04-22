@@ -1,0 +1,15 @@
+{%extends 'base.html'%}
+{%block body%}
+<b><h6> Member of </h6></b>
+{%for item in memberOf%}
+<ul>
+    <li><p>{{item.roomName}} - {{item.ID}}</p></li>
+</ul>
+{%endfor%}
+<b><h6> Owned rooms </h6></b>
+{%for item in ownerOf%}
+<ul>
+    <li><p>{{item.roomName}} - {{item.ID}}</p></li>
+</ul>
+{%endfor%}
+{%endblock%}

@@ -2,7 +2,8 @@ from flask import Flask, render_template, redirect, url_for, request, session
 from pymongo.errors import DuplicateKeyError
 from flask_socketio import SocketIO, join_room
 from flask_login import LoginManager, login_user, login_required, current_user, logout_user
-from dbAccess import getUser, saveUser, saveRoom, addRoomMembers, validateMember
+from dbAccess import getUser, saveUser, saveRoom, isMember, isOwner, getRooms
+import bson
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -55,14 +56,26 @@ def signup():
             err = "Username already exists"
     return render_template('signup.html', message=err)
 
-@app.route('/join')
+@app.route('/join', methods=['GET', 'POST'])
 @login_required
 def join():
-    return render_template("join.html")
+    err = ''
+    if request.method == 'POST':
+        roomName = request.form.get('roomName')
+        ID = request.form.get('roomID')
+        try:
+            if(isMember(ID, current_user.username) or isOwner(ID, current_user.username)):
+                return redirect(url_for('chatRoom', username=current_user.username, room=roomName, roomID=ID))
+            else:
+                err = 'You are not a member of this room'
+        except bson.errors.InvalidId:
+            err = 'Invalid ID'
+            return render_template("join.html", message=err)
+    return render_template("join.html", message=err)
 
 @app.route('/chat/<room>/<roomID>')
 @login_required
-def chat(room, roomID):
+def chatRoom(room, roomID):
     return render_template('chat.html', username=current_user.username, room=room, roomID=roomID)
 
 @app.route('/create-room', methods=['GET', 'POST'])
@@ -72,17 +85,26 @@ def createRoom():
     if request.method == 'POST':
         roomName = request.form.get('roomName')
         roomMembers = request.form.get('roomMembers').split(',')
-        roomPass = request.form.get('roomPass')
+
         usernames = [username.strip() for username in roomMembers]
+        if(current_user.username in usernames):
+            err='Cannot add your own username to room'
+            return render_template('createRoom.html', message=err)
         for username in usernames:
-            if(validateMember(username)):
+            if(getUser(username)):
                 pass
             else:
                 err=f'Username not found: {username}'
                 return render_template('createRoom.html', message=err)
-        ID = saveRoom(roomName, current_user.username, usernames, roomPass)
-        return redirect(url_for('chat', username=current_user.username, room=roomName, roomID=ID))
+        ID = saveRoom(roomName, current_user.username, usernames)
+        return redirect(url_for('chatRoom', username=current_user.username, room=roomName, roomID=ID))
     return render_template('createRoom.html', message=err)
+
+@app.route('/view-room')
+@login_required
+def viewRooms():
+    memberOf, ownerOf = getRooms(current_user.username)
+    return render_template('viewRooms.html', memberOf=memberOf, ownerOf=ownerOf)
 
 @socketio.on('join_room')
 def handle_join(data):
