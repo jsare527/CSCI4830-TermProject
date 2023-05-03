@@ -1,15 +1,56 @@
 {%extends 'base.html'%}
 {%block body%}
-<b><h6> Member of </h6></b>
-{%for item in memberOf%}
-<ul>
-    <li><p>{{item.roomName}} - {{item.ID}}</p></li>
-</ul>
-{%endfor%}
-<b><h6> Owned rooms </h6></b>
-{%for item in ownerOf%}
-<ul>
-    <li><p>{{item.roomName}} - {{item.ID}}</p></li>
-</ul>
-{%endfor%}
-{%endblock%}
+<script>
+    const username = {{current_user.username|tojson|safe}}
+</script>
+<div class="container d-flex justify-content-between">
+    <div class="col text-center">
+        <b><h6 class="display-4"> Member of </h6></b>
+    <div class="col text-center" style="overflow-y: scroll; max-height: 75vh;">
+        <ul class="list-group">
+        {%if memberOf%}
+            {%for item in memberOf%}
+            <li class="list-group-item"><a class="text-success" href="{{url_for('chatRoom', roomID=item._id)}}">{{item.roomName}} - {{item._id}}</a>
+            <br>
+            <div class="btn-group btn-group-sm mt-auto" role="group">
+                <script src="{{url_for('static', filename='js/confirmation.js')}}"></script>
+                <button class="btn btn-primary btn-sm" onclick="window.location.href='{{url_for('chatRoom', roomID=item._id)}}'">Join room</button>
+                <button class="btn btn-danger btn-sm" onclick="conf('{{item._id}}', '{{item.roomOwner}}', '{{item.roomMembers | length}}')">Leave room</button>
+            </div>
+            </br>
+            </li>
+            {%endfor%}
+        {%else%}
+            <li class="list-group-item"> Not a member of any rooms</li>
+        {%endif%}
+        </ul>
+    </div>
+    </div>
+
+
+    <div class="col text-center">
+        <b><h6 class="display-4"> Owned rooms </h6></b>
+        <div class="col text-center" style="overflow-y: scroll; max-height: 75vh;">
+        <ul class="list-group">
+        {%if ownerOf%}
+            {%for item in ownerOf%}
+            <li class="list-group-item">
+                <a class="text-success" href="{{url_for('chatRoom', roomID=item._id)}}">{{item.roomName}} - {{item._id}}</a>
+            <br>
+            <div class="btn-group btn-group-sm mt-auto" role="group">
+                <button class="btn btn-primary btn-sm" onclick="window.location.href='{{url_for('chatRoom', roomID=item._id)}}'">Join room</button>
+                <button class="btn btn-info btn-sm" onclick="window.location.href='{{url_for('manageRoom', roomID=item._id)}}'">Manage room</button>
+                <script src="{{url_for('static', filename='js/confirmation.js')}}"></script>
+                <button class="btn btn-danger btn-sm" onclick="conf('{{item._id}}', '{{item.roomOwner}}', '{{item.roomMembers | length}}')">Leave room</button>
+            </div>
+            </br>
+            </li>
+            {%endfor%}
+        {%else%}
+            <li class="list-group-item"> Not an owner of any rooms</li>
+        {%endif%}
+        </ul>
+    </div>
+    </div>
+    {%endblock%}
+</div>

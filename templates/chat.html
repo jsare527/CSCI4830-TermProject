@@ -1,29 +1,67 @@
 {%extends 'base.html'%}
 {%block head%} <link rel="stylesheet" href="{{url_for('static', filename='css/styles.css')}}"/> {%endblock%}
-{%block title%} Chat {{room}}! {%endblock%}
-{%block body%} 
-    <div class="d-flex justify-content-center">
-        <h1> Welcome to {{room}} </h1>
+{%block title%} Chat {{roomName}}! {%endblock%}
+{%block body%}
+    <div class="row-xs-12 d-flex">
+        <div class="col d-flex justify-content-between">
+            <h2>Welcome to {{roomName}}  </h2>
+            <b><h2 class="ml-5">Room ID: {{roomID}}</h2></b>
+        </div>
     </div>
-    <div class="d-flex justify-content-center">
-        <b><h3>Room ID: {{roomID}}</h3></b>
-    </div>
-    <div class="container">
-        <div class="messages" id="messages"></div>
-        <div class="inputs">
-            <input type="text" name="messageInput" id="messageInput" placeholder="Enter message here">
-            <button type="submit" class="btn btn-success btn-sm" onClick="sendMessage()">Send</button>
-        </div>  
-    </div>
-
+    <section class="d-flex">
+        <div class="container-fluid" id="con">
+            <div class="messages d-flex flex-column justify-items-center" id="messages">
+                {%for msg in messages%}
+                <div><b>{{msg.username}} [{{msg.hourMinute}}]: </b> {{msg.message}}</div>
+                {%endfor%}
+            </div>
+            <div class="inputs">
+                <input type="text" name="messageInput" id="messageInput" placeholder="Enter message here">
+                <button type="submit" class="btn btn-success btn-sm" id="inpBtn" onClick="sendMessage()" onkeydown="enter(this)">Send</button>
+            </div>  
+        </div>
+    </section>
+    
+    <aside class="d-flex"> 
+        <div class="manageRoom">
+            <div class="listUsers">
+                <div class="row text-center">
+                    <div class="col d-flex list-group">
+                        <h5>Members of this room <span class="badge badge-primary badge-pill">{{memberCount}}</span></h5> 
+                        <div class="row">
+                            <div class="col d-flex flex-column" style="overflow-y: scroll; max-height: 65vh;">
+                                {%for member in members%}
+                                <div class="col d-flex flex-column">
+                                    <li class="list-group-item"><b>{{member}}</b></li>
+                                </div>
+                            {%endfor%}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row d-flex mt-auto">
+                <div class="col d-flex flex-column">
+                    <div class="btn-group btn-group-sm mt-auto" role="group">
+                        <button type="button" class="btn btn-primary btn-sm mx-auto" onClick="history.back()"><< Back</button>
+                        {%if current_user.username == owner%}
+                        <button type="button" onclick="window.location.href='{{url_for('manageRoom', roomID=roomID)}}'" class="btn btn-info btn-sm mx-auto">Manage this room</button>
+                        {%endif%}
+                        <script>
+                            const username = {{current_user.username|tojson|safe}}
+                        </script>
+                        <script src="{{url_for('static', filename='js/confirmation.js')}}"></script>
+                        <button type="button" onclick="conf('{{roomID}}', '{{owner}}', '{{memberCount}}')" class="btn btn-danger btn-sm mx-auto">Leave this room</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </aside>
 {%endblock%}
 {%block script%}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
 <script>
-    function getCurrentURL(){
-        return window.location.href
-    }
-    const url = getCurrentURL()
+    const url = window.location.href;
     const conn = url.split("/")
     const socket = io.connect(`${conn[2]}/`);
     const sendMessage = () => {
@@ -32,7 +70,8 @@
         if(message.length){
             socket.emit('sent_message', {
                 username: "{{username}}",
-                room: "{{room}}",
+                room: "{{roomName}}",
+                roomID: "{{roomID}}",
                 message: message
             });
         }
@@ -40,26 +79,33 @@
         messageInput.focus();
     };
 
+    var textInput = document.getElementById("messageInput");
+    textInput.addEventListener('keypress', function(e){
+        if(e.key == "Enter"){
+            document.getElementById("inpBtn").click();
+        }
+    });
+
     socket.on('connect', function(){
         socket.emit('join_room', {
             username : "{{username}}",
-            room: "{{room}}"
+            room: "{{roomName}}"
         });
     });
 
-
     socket.on('messageReceive', function(data){
-        console.log(data);
-        const newDiv = document.createElement('div')
-        newDiv.innerHTML = `<b>${data.username}</b> ${data.message}`;
+        //console.log(data)
+        const newDiv = document.createElement('div');
+        newDiv.className = "d-flex justify-content-between"
+        newDiv.innerHTML = `${data.username} [${data.hourMinute}]: ${data.message}`;
+
         document.getElementById('messages').appendChild(newDiv);
     })
 
-    socket.on('joined', function(data){
-        console.log(data);
-        const newDiv = document.createElement('div')
-        newDiv.innerHTML = `<b>${data.username}</b> has joined the room`;
-        document.getElementById('messages').appendChild(newDiv);
-    })
+   //socket.on('joined', function(data){
+   //    const newDiv = document.createElement('div')
+   //    newDiv.innerHTML = `<b>${data.username}</b> has joined the room`;
+   //    document.getElementById('messages').appendChild(newDiv);
+   //})
 </script>
 {%endblock%}

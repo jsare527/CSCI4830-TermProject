@@ -1,6 +1,6 @@
 {%extends 'base.html'%}
 {%block head%} <link rel="stylesheet" href="{{url_for('static', filename='css/backgroundColor.css')}}"/> {%endblock%}
-{%block title%} Rooms! {%endblock%}
+{%block title%} Find friends {%endblock%}
 {%block body%}
 <section class="vh-100">
     <div class="container py-5 h-100">
@@ -9,25 +9,21 @@
           <img src="{{url_for('static', filename='pictures/UNO.png')}}" class="img-fluid" alt="Phone image">
         </div>
         <div class="col-md-7 col-lg-5 col-xl-5 offset-xl-1">
-          <form method="post" action="{{url_for("join")}}">
-            <h2>Join room</h2>
+          <form method="post" action="{{url_for("findFriends")}}">
+            <h2>Find user</h2>
 
             <div class="form-outline mb-4">
-              <input type="text" id="roomID" name="roomID" class="form-control form-control-lg" />
-              <label class="form-label" for="roomID">Room ID</label>
+              <input type="text" id="friendUser" name="friendUser" class="form-control form-control-lg" />
+              <label class="form-label" for="friendUser">Enter username</label>
             </div>
             
             <div> 
               <h6><b>{{message}}</b><h6>
             </div>
 
-            <button type="submit" class="btn btn-info btn-lg btn-block">Join</button>
-            <div class="row d-flex align-items-center justify-content-center h-100">
-              <b><h3>OR</h3></b>
-            </div>
+            <button type="submit" class="btn btn-info btn-lg btn-block">Send request</button>
   
           </form>
-          <button onclick="window.location.href='{{url_for('viewRooms')}}'" class="btn btn-danger btn-lg btn-block">View your rooms</button>
         </div>
       </div>
     </div>

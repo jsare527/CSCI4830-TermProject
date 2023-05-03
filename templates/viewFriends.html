@@ -1,0 +1,61 @@
+{%extends 'base.html'%}
+{%block body%}
+<div class="container d-flex justify-content-between">
+    <div class="col text-center">
+        <h3>Incoming friend requests</h3>
+    <div class="col text-center" style="overflow-y: scroll; max-height: 75vh;">
+        <ul class="list-group">
+        {%if incomingFriendRequests%}
+        {%for request in incomingFriendRequests%}
+            <li class="list-group-item">From: {{request.sender}} at [{{request.hourMinute}}]
+                <div class="btn-group btn-group-sm mt-auto" role="group">
+                    <button class="btn btn-primary btn-sm" onclick="window.location.href='{{url_for('handleAcceptRequest', requestID=request._id, sender=request.sender)}}'">Accept</button>
+                    <button class="btn btn-danger btn-sm" onclick="window.location.href='{{url_for('handleDeclineRequest', requestID=request._id)}}'">Decline</button>
+                </div>
+            </li>
+        {%endfor%}
+        {%else%}
+        <li class="list-group-item">No incoming requests</li>
+        {%endif%}
+        </ul>
+    </div>
+    </div>
+
+    <div class="col text-center">
+        <h3>Outgoing friend requests</h3>
+    <div class="col text-left" style="overflow-y: scroll; max-height: 75vh;">
+        <ul class="list-group">
+        {%if outGoingFriendRequests%}
+        {%for request in outGoingFriendRequests%}
+            <li class="list-group-item text-left"><a>To: <b>{{request.recipient}}</b> sent at [{{request.hourMinute}}]</a>
+            <br>
+            <div class="btn-group btn-group-sm btn-block mt-auto" role="group">
+                <button class="btn btn-danger btn-sm btn-block" onclick="window.location.href='{{url_for('handleDeclineRequest', requestID=request._id)}}'">Remove</button>
+            </div>
+            </br>
+            </li>
+        {%endfor%}
+        {%else%}
+        <li class="list-group-item">No outgoing requests</li>
+        {%endif%}
+        </ul>
+    </div>
+    </div>
+    <div class="col text-center">
+        <h3>Your friends</h3>
+    <div class="col text-center" style="overflow-y: scroll; max-height: 75vh;">
+        {%if currentFriends%}
+        <ul class="list-group">
+        {%for friend in currentFriends%}
+        <li class="list-group-item">{{friend}}
+            <button class="btn btn-danger btn-sm btn-block" onclick="window.location.href='{{url_for('handleRemoveFriend', friend=friend)}}'">Remove</button>
+        </li>
+        {%endfor%}
+        {%else%}
+            <li class="list-group-item">You have no friends</li>
+        {%endif%}
+        </ul>
+    </div>
+    </div>
+</div>
+{%endblock%}

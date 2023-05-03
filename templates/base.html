@@ -21,14 +21,23 @@
                 <li class="nav-item active">
                   <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
                 </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="/view-room">View your rooms</a>
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="/view-room" data-toggle="dropdown">Rooms</a>
+                  <div class="dropdown-menu">
+                    <a class="dropdown-item" href="/view-room">View your rooms</a>
+                    <a class="dropdown-item" href="/create-room">Create room</a>
+                    <a class="dropdown-item" href="/join">Join room</a>
+                  </div>
                 </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="/create-room">Create rooms</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="/join">Join room</a>
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="/friends" data-toggle="dropdown">Friends</a>
+                  <div class="dropdown-menu">
+                    <a class="dropdown-item" href="/find-friends">Find friends</a>
+                    <a class="dropdown-item" href="/view-friends">View friends</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="/view-friends">Incoming requests: <span class="badge badge-primary badge-pill">{{session["incomingFriendRequests"]}}</span></a>
+                    <a class="dropdown-item" href="/view-friends">Outgoing requests: <span class="badge badge-primary badge-pill">{{session["outgoingFriendRequests"]}}</span></a>
+                  </div>
                 </li>
               </ul>
               <span class="navbar-text">
