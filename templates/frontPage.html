@@ -1,0 +1,15 @@
+{%extends 'base.html'%}
+{%block head%} <link rel="stylesheet" href="{{url_for('static', filename='css/backgroundColor.css')}}"/> {%endblock%}
+{%block body%}
+<body style="height: 80%">
+    <div class="container h-100 d-flex text-center">
+        <div role="main" class="inner cover col my-auto">
+            <h1 class="cover-heading text-white">Welcome to this chat app</h1>
+            <p class="lead text-white"><b>This chat app allows you to talk to other users in chat rooms. You can be a member or an owner of a chat room.</b></p>
+            <p class="lead">
+              <a href="{{url_for('viewRooms')}}" class="btn btn-lg btn-danger">View your rooms</a>
+            </p>
+        </div>
+    </div>
+</body>
+{%endblock%}

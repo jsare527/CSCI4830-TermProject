@@ -1,3 +1,7 @@
 body{
-    background-image: linear-gradient(to right, rgba(255, 0, 0, 0.781), rgb(101, 91, 91));
+    background-image: linear-gradient(to right, #242582, #2F2FA2);
+}
+.btn{
+    background-image: linear-gradient(to right, #f85032, #e73827);
+    outline: none;
 }

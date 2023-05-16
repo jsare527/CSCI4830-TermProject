@@ -1,13 +1,10 @@
 {%extends 'base.html'%}
-{%block head%} <link rel="stylesheet" href="{{url_for('static', filename='css/backgroundColor.css')}}"/> {%endblock%}
 {%block title%} Login! {%endblock%}
 {%block body%}
-<section class="vh-100">
-    <div class="container py-5 h-100">
+<link defer rel="stylesheet" href="{{url_for('static', filename='css/backgroundColor.css')}}"/> 
+<section class="vh-100" style="background-image: linear-gradient(to right, #D8B5FF, #1EAE98);">
+    <div class="container py-5 h-100 text-dark">
       <div class="row d-flex align-items-center justify-content-center h-100">
-        <div class="col-md-8 col-lg-7 col-xl-6">
-          <img src="{{url_for('static', filename='pictures/UNO.png')}}" class="img-fluid" alt="Phone image">
-        </div>
         <div class="col-md-7 col-lg-5 col-xl-5 offset-xl-1">
           <form method="post" action="{{url_for("login")}}">
             <h2>Log in</h2>

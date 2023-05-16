@@ -1,13 +1,15 @@
 {%extends 'base.html'%}
+{%block head%} <link rel="stylesheet" href="{{url_for('static', filename='css/scrollBar.css')}}"/> {%endblock%}
 {%block body%}
-<div class="container d-flex justify-content-between">
+<body style="background-image: linear-gradient(to right, #242582, #2F2FA2);">
+<div class="container d-flex justify-content-between text-white">
     <div class="col text-center">
         <h3>Incoming friend requests</h3>
-    <div class="col text-center" style="overflow-y: scroll; max-height: 75vh;">
+    <div class="col text-center" id="scrollContainer">
         <ul class="list-group">
         {%if incomingFriendRequests%}
         {%for request in incomingFriendRequests%}
-            <li class="list-group-item">From: {{request.sender}} at [{{request.hourMinute}}]
+            <li class="list-group-item bg-dark">From: {{request.sender}} at [{{request.hourMinute}}]
                 <div class="btn-group btn-group-sm mt-auto" role="group">
                     <button class="btn btn-primary btn-sm" onclick="window.location.href='{{url_for('handleAcceptRequest', requestID=request._id, sender=request.sender)}}'">Accept</button>
                     <button class="btn btn-danger btn-sm" onclick="window.location.href='{{url_for('handleDeclineRequest', requestID=request._id)}}'">Decline</button>
@@ -15,7 +17,7 @@
             </li>
         {%endfor%}
         {%else%}
-        <li class="list-group-item">No incoming requests</li>
+        <li class="list-group-item bg-dark">No incoming requests</li>
         {%endif%}
         </ul>
     </div>
@@ -23,11 +25,11 @@
 
     <div class="col text-center">
         <h3>Outgoing friend requests</h3>
-    <div class="col text-left" style="overflow-y: scroll; max-height: 75vh;">
+    <div class="col text-left" id="scrollContainer">
         <ul class="list-group">
         {%if outGoingFriendRequests%}
         {%for request in outGoingFriendRequests%}
-            <li class="list-group-item text-left"><a>To: <b>{{request.recipient}}</b> sent at [{{request.hourMinute}}]</a>
+            <li class="list-group-item text-left bg-dark"><a>To: <b>{{request.recipient}}</b> sent at [{{request.hourMinute}}]</a>
             <br>
             <div class="btn-group btn-group-sm btn-block mt-auto" role="group">
                 <button class="btn btn-danger btn-sm btn-block" onclick="window.location.href='{{url_for('handleDeclineRequest', requestID=request._id)}}'">Remove</button>
@@ -36,26 +38,27 @@
             </li>
         {%endfor%}
         {%else%}
-        <li class="list-group-item">No outgoing requests</li>
+        <li class="list-group-item bg-dark">No outgoing requests</li>
         {%endif%}
         </ul>
     </div>
     </div>
     <div class="col text-center">
         <h3>Your friends</h3>
-    <div class="col text-center" style="overflow-y: scroll; max-height: 75vh;">
+    <div class="col text-center" id="scrollContainer">
         {%if currentFriends%}
         <ul class="list-group">
         {%for friend in currentFriends%}
-        <li class="list-group-item">{{friend}}
+        <li class="list-group-item bg-dark">{{friend}}
             <button class="btn btn-danger btn-sm btn-block" onclick="window.location.href='{{url_for('handleRemoveFriend', friend=friend)}}'">Remove</button>
         </li>
         {%endfor%}
         {%else%}
-            <li class="list-group-item">You have no friends</li>
+            <li class="list-group-item bg-dark">You have no friends</li>
         {%endif%}
         </ul>
     </div>
     </div>
 </div>
+</body>
 {%endblock%}

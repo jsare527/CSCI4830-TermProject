@@ -50,7 +50,7 @@
                         <script>
                             const username = {{current_user.username|tojson|safe}}
                         </script>
-                        <script src="{{url_for('static', filename='js/confirmation.js')}}"></script>
+                        <script async src="{{url_for('static', filename='js/confirmation.js')}}"></script>
                         <button type="button" onclick="conf('{{roomID}}', '{{owner}}', '{{memberCount}}')" class="btn btn-danger btn-sm mx-auto">Leave this room</button>
                     </div>
                 </div>
@@ -61,9 +61,7 @@
 {%block script%}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
 <script>
-    const url = window.location.href;
-    const conn = url.split("/")
-    const socket = io.connect(`${conn[2]}/`);
+    const socket = io();
     const sendMessage = () => {
         let messageInput = document.getElementById('messageInput');
         let message = messageInput.value.trim();
